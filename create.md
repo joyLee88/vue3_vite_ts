@@ -953,9 +953,10 @@ Components({
 <van-button type="primary">登录</van-button>
 
 4. 移动端适配
-yarn add postcss-px-to-viewport
-vite集成了postcss，不用添加postcss配置文件
-vite.config：
+   yarn add postcss-px-to-viewport
+   vite 集成了 postcss，不用添加 postcss 配置文件
+   vite.config：
+
 ```js
 import pxtovw from "postcss-px-to-viewport";
 const basePxToVw = pxtovw({
@@ -976,14 +977,47 @@ css: {
   },
 ```
 
-5. 实现项目主题切换方案
+5. 移动端 click 响应延迟
 
+- 禁用缩放
 
-6. mock
+<meta name = "viewport" content="user-scalable=no" >
 
-7. vconsole
+缺点: 网页无法缩放
+
+- 更改默认视口宽度
+
+<meta name="viewport" content="width=device-width">
+
+- fastclick
+  原理: 在检测到 touchend 事件的时候，会通过 DOM 自定义事件立即出发模拟一个 click 事件，并把浏览器在 300ms 之后真正的 click 事件阻止掉
+  yarn add fastclick -S
+
+env.d.ts 进行文件类型声明
+
+```js
+declare module "fastclick" {
+  import type FastClickStatic from "@/utils/types/fastClickType";
+  const FastClick: FastClickStatic;
+  export = FastClick;
+}
+```
+
+main.ts
+
+```js
+import FastClick from 'fastclick';
+FastClick.attach(document.body);
+```
+
+6. 实现项目主题切换方案
+
+7. mock
+
+8. vconsole
 
 # 常用插件
+
 可以查看官方文档：https://vitejs.cn/plugins/
 
 - @vitejs/plugin-vue 提供 Vue 3 单文件组件支持

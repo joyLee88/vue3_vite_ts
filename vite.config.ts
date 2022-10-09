@@ -7,7 +7,7 @@ import Components from 'unplugin-vue-components/vite';
 import { VantResolver } from 'unplugin-vue-components/resolvers';
 import pxtovw from "postcss-px-to-viewport";
 const basePxToVw = pxtovw({
-  viewportWidth: 750,
+  viewportWidth: 375,
   viewportUnit: "vw"
 })
 
