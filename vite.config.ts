@@ -3,6 +3,13 @@ import vue from "@vitejs/plugin-vue";
 import { resolve } from "path";
 //@ts-ignore
 import viteCompression from "vite-plugin-compression";
+import Components from 'unplugin-vue-components/vite';
+import { VantResolver } from 'unplugin-vue-components/resolvers';
+import pxtovw from "postcss-px-to-viewport";
+const basePxToVw = pxtovw({
+  viewportWidth: 750,
+  viewportUnit: "vw"
+})
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -17,6 +24,9 @@ export default defineConfig({
       algorithm: "gzip",
       ext: ".gz",
     }),
+    Components({
+      resolvers: [VantResolver()],
+    }),
   ],
   resolve: {
     alias: {
@@ -24,11 +34,15 @@ export default defineConfig({
     },
   },
   css: {
+    // 公用样式
     preprocessorOptions: {
       scss: {
         additionalData: '@import "@/assets/style/main.scss";',
       },
     },
+    postcss: {
+      plugins: [basePxToVw]
+    }
   },
   //启动服务配置
   server: {

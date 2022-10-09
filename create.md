@@ -173,7 +173,7 @@ export default defineConfig({
   //启动服务配置
   server: {
     host: '0.0.0.0',
-    port: 8000,
+    port: 3000,
     open: true,
     https: false,
     proxy: {},
@@ -459,8 +459,9 @@ const mainStore = useMainStore()
 ```
 
 (5) getters action
-* getters
-Pinia 中的 getter 与 Vuex 中的 getter 、组件中的计算属性具有相同的功能
+
+- getters
+  Pinia 中的 getter 与 Vuex 中的 getter 、组件中的计算属性具有相同的功能
 
 store/main.ts
 
@@ -502,8 +503,8 @@ const updateName = ()=>{
 </script>
 ```
 
-* actions
-这里与 Vuex 有极大的不同，Pinia 仅提供了一种方法来定义如何更改状态的规则，放弃 mutations 只依靠 Actions，这是一项重大的改变。
+- actions
+  这里与 Vuex 有极大的不同，Pinia 仅提供了一种方法来定义如何更改状态的规则，放弃 mutations 只依靠 Actions，这是一项重大的改变。
 
 让 Actions 更加的灵活：
 
@@ -726,9 +727,10 @@ module.exports = {
   node_modules
   dist
 ```
+
 （4）代码换行
 当超出折行长度时，才对属性进行换行
-volar/ beautify插件
+volar/ beautify 插件
 
 - prettier 支持
   （1）安装
@@ -836,4 +838,161 @@ lint-staged
 
 # 2022-10-10
 
-1.实现简单页面结构； 2. sass/less 升级配置； 3.实现项目主题切换方案
+1. 实现简单页面结构；
+2. css 预处理器；
+   虽然 vite 原生支持 less/sass/scss/stylus，但是你必须手动安装他们的预处理器依赖
+
+- 安装
+  yarn add sass-loader --dev
+  yarn add dart-sass --dev
+  yarn add sass --dev
+
+- 配置全局 scss 样式文件
+  在 src/assets 下新增 style 文件夹，用于存放全局样式文件
+
+- 新建 main.scss, 设置一个用于测试的颜色变量 :
+  $test-color: red;
+
+- 如何将这个全局样式文件全局注入到项目中呢？配置 Vite.config 即可：
+  // resolve 下面添加
+  css:{
+  preprocessorOptions:{
+  scss:{
+  additionalData:'@import "@/assets/style/main.scss";'
+  }
+  }
+  },
+
+从而，可以直接在组件中使用,不需要任何引入可以直接使用全局 scss 定义的变量
+
+<style scoped lang="scss">
+a {
+  color: $test-color;
+}
+</style>
+
+3. ui 库
+
+- yarn add vant
+- src/utils/vantui.ts
+
+```js
+import { App } from 'vue';
+import { Button } from 'vant';
+const Vant = {
+  install: (app: App): void => {
+    app.use(Button);
+  },
+};
+export default Vant;
+```
+
+- 在 main.ts 引入
+  import vant from "./utils/vantui";
+  再 use
+
+- 安装按需引入的插件
+  yarn add vite-plugin-style-import -D
+
+- vue.config.js 增加
+
+```js
+import styleImport, { VantResolve } from "vite-plugin-style-import";
+
+plugins的数组中加
+  styleImport({
+      resolves: [VantResolve]
+    })
+
+若是2.0版本
+import { createStyleImportPlugin, VantResolve } from "vite-plugin-style-import";
+
+createStyleImportPlugin({
+      resolves: [VantResolve()]
+    })
+```
+
+报错：
+Cannot find module 'consola'
+
+yarn add consola -D
+
+- 在 nodemodule 里 vant 的路径不对
+  node_modules/vant/lib/vant/es/button/style
+  实际是没有 lib/vant 的
+
+```js
+createStyleImportPlugin({
+  resolves: [VantResolve()],
+  libs: [
+    {
+      libraryName: 'vant',
+      esModule: true,
+      resolveStyle: (name) => `../es/${name}/style`,
+    },
+  ],
+});
+```
+
+- 按需引入(vant 官网)
+  yarn add unplugin-vue-components -D
+
+vite.config.ts
+
+```js
+import Components from 'unplugin-vue-components/vite';
+import { VantResolver } from 'unplugin-vue-components/resolvers';
+
+plugin的数组中加
+Components({
+      resolvers: [VantResolver()],
+    }),
+```
+
+使用：
+<van-button type="primary">登录</van-button>
+
+4. 移动端适配
+yarn add postcss-px-to-viewport
+vite集成了postcss，不用添加postcss配置文件
+vite.config：
+```js
+import pxtovw from "postcss-px-to-viewport";
+const basePxToVw = pxtovw({
+  viewportWidth: 750,
+  viewportUnit: "vw"
+})
+在css
+css: {
+    // 公用样式
+    preprocessorOptions: {
+      scss: {
+        additionalData: '@import "@/assets/style/main.scss";',
+      },
+    },
+    postcss: {
+      plugins: [basePxToVw]
+    }
+  },
+```
+
+5. 实现项目主题切换方案
+
+
+6. mock
+
+7. vconsole
+
+# 常用插件
+可以查看官方文档：https://vitejs.cn/plugins/
+
+- @vitejs/plugin-vue 提供 Vue 3 单文件组件支持
+- @vitejs/plugin-vue-jsx 提供 Vue 3 JSX 支持（通过 专用的 Babel 转换插件）
+- @vitejs/plugin-legacy 为打包后的文件提供传统浏览器兼容性支持
+- unplugin-vue-components 组件的按需自动导入
+- vite-plugin-compression 使用 gzip 或者 brotli 来压缩资源
+
+非常推荐使用的 hooks 库
+VueUse：https://vueuse.org/
+和 react hooks 真的很像，所以就称为 hooks
+VueUse 是一个基于 Composition API 的实用函数集合。通俗的来说，这就是一个工具函数包，它可以帮助你快速实现一些常见的功能，免得你自己去写，解决重复的工作内容。以及进行了基于 Composition API 的封装。

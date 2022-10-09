@@ -17,6 +17,8 @@
     "axios": "^1.1.2",
     "nprogress": "^0.2.0",
     "pinia": "^2.0.0-rc.10",
+    "postcss-px-to-viewport": "^1.1.1",
+    "vant": "^3.6.4",
     "vue": "^3.2.25",
     "vue-router": "4"
   },
@@ -25,6 +27,7 @@
     "@typescript-eslint/eslint-plugin": "^5.39.0",
     "@typescript-eslint/parser": "^5.39.0",
     "@vitejs/plugin-vue": "^2.3.0",
+    "dart-sass": "^1.25.0",
     "eslint": "^8.25.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-prettier": "^4.2.1",
@@ -33,7 +36,10 @@
     "lint-staged": ">=10",
     "mrm": "^4.1.6",
     "prettier": "^2.7.1",
+    "sass": "^1.55.0",
+    "sass-loader": "^13.1.0",
     "typescript": "^4.5.4",
+    "unplugin-vue-components": "^0.22.8",
     "vite": "^2.9.0",
     "vite-plugin-compression": "^0.5.1",
     "vue-tsc": "^0.29.8"
